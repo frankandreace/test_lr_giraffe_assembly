@@ -1,0 +1,1 @@
+# test_lr_giraffe_assembly
