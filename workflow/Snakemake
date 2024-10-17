@@ -1,0 +1,7 @@
+# CONFIGURATIONS FILE
+configfile:"config/config.yaml"
+
+#INCLUDING RULE FILES
+include: "rules/download_files.smk"
+
+# EXECUTION

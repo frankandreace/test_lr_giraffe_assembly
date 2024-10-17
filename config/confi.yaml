@@ -1,0 +1,11 @@
+# URLS TO DATA
+urls:
+  - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.gbz"
+    output: "resources/graph/hprc-v1.1-mc-chm13.gbz"
+  - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC_PLUS/HG002/raw_data/PacBio_HiFi/15kb/m64012_190920_173625.Q20.fastq"
+    output: "resources/sequences/m64012_190920_173625.Q20.fastq"
+
+benchmark_folder: "results/benchmarks"
+logs_folder: "results/logs"
+
+test_chromosome: "chr20"
