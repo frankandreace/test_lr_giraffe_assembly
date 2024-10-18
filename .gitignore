@@ -1,0 +1,4 @@
+resources/graphs
+resources/sequences
+.snakemake/
+workflow/.snakemake/

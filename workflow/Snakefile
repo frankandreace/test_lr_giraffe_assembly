@@ -1,0 +1,15 @@
+# CONFIGURATIONS FILE
+configfile:"../config/config.yaml"
+
+#INCLUDING RULE FILES
+include: "rules/download_files.smk"
+
+#REQUIRED OUTPUT
+downloaded_files = [entry['output'] for entry in config['urls']]
+
+
+# EXECUTION
+
+rule all:
+    input:
+        downloaded_files

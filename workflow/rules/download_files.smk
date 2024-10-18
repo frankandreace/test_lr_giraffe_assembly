@@ -2,16 +2,17 @@
 
 rule download_data:
     output:
-        lambda wildcards: wildcards.output
+        file="{output}"  # The wildcard {output} represents the file path from config
     params:
         url=lambda wildcards: next(entry['url'] for entry in config['urls'] if entry['output'] == wildcards.output)
     benchmark:
-        "benchmarks/ggcat_index.tsv"
+        # Directly use the {output} wildcard as part of the formatted string
+        "results/benchmarks/download_{output}.benchmark.txt"
     log:
-        "logs/ggcat_index.log"
-    threads: workflow.cores
+        # Also use {output} for logging file
+        "results/logs/download_{output}.log"
+    threads: 1  # Set the appropriate number of threads, curl usually uses 1 thread
     shell:
         """
-        mkdir -p data
-        curl -o {output} {params.url}
+        curl -o {output.file} {params.url}
         """
