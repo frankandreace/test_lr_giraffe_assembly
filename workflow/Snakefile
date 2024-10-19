@@ -3,13 +3,16 @@ configfile:"../config/config.yaml"
 
 #INCLUDING RULE FILES
 include: "rules/download_files.smk"
+include: "rules/help_tasks.smk"
+include: "rules/vg_rules.smk"
 
 #REQUIRED OUTPUT
-downloaded_files = [entry['output'] for entry in config['urls']]
-
-
+# downloaded_files = [ f"resources/{outputs[entry['file_type']]}/{entry['output']}.{extension[entry['file_type']]}" for entry in config['urls']]
+graph = ["../results/graph/index/hprc-v1.1-mc-chm13-chr20.gbz"]
+alignment = ["../results/alignment/m64012_190920_173625.Q20.gaf"]
 # EXECUTION
 
 rule all:
     input:
-        downloaded_files
+        graph
+        alignment
