@@ -2,11 +2,11 @@
 
 rule vg_giraffe_lr_gaf:
     output:
-        gaf="../results/alignment/{reads_file}.gaf"
+        gaf="../results/alignment/{reads_file}_{file}.gaf"
     input:
-        graph_gbz="../results/graph/index/{file}.giraffe.gbz"
-        distance_index="../results/graph/index/{file}.dist"
-        minimizer_index="../results/graph/index/{file}.min"
+        graph_gbz="../results/graph/index/{file}.giraffe.gbz",
+        distance_index="../results/graph/index/{file}.dist",
+        minimizer_index="../results/graph/index/{file}.min",
         hifi_sequence="{reads_file}.fastq"
     # params:
     #     url=lambda wildcards: next(entry['url'] for entry in config['urls'] if entry['output'] == wildcards.output)
@@ -27,8 +27,8 @@ rule vg_giraffe_lr_gaf:
 
 rule vg_autoindex:
     output:
-        index="../results/graph/index/{file}.dist"
-        minimizer_index="../results/graph/index/{file}.min"
+        index="../results/graph/index/{file}.dist",
+        minimizer_index="../results/graph/index/{file}.min",
         graph_gbz="../results/graph/index/{file}.giraffe.gbz"
     input:
         gfa="../resources/graph/gfa/{file}.gfa"
