@@ -2,18 +2,18 @@
 configfile:"../config/config.yaml"
 
 #INCLUDING RULE FILES
-include: "rules/download_files.smk"
+#include: "rules/download_files.smk"
 include: "rules/help_tasks.smk"
 include: "rules/vg_rules.smk"
 
 #REQUIRED OUTPUT
-downloaded_files = ["",""]
-graph = ["../results/graph/index/hprc-v1.1-mc-chm13-chr20.gbz"]
+#downloaded_files = ["",""]
+dist_idx = ["../results/graph/index/hprc-v1.1-mc-chm13-chr20.dist"]
 alignment = ["../results/alignment/m64012_190920_173625.Q20.gaf"]
 
 # EXECUTION
 
 rule all:
     input:
-        graph
+        dist_idx
         #alignment

@@ -27,11 +27,11 @@ rule vg_giraffe_lr_gaf:
 
 rule vg_autoindex:
     output:
-        index="../results/graph/index/chr19_index.dist"
+        index="../results/graph/index/{file}.dist"
     input:
-        gfa="../results/graph/gfa/{file}.gfa"
+        gfa="../resources/graph/gfa/{file}.gfa"
     log:
         "../logs/vg/autoindex/{file}.log"
     threads: workflow.cores
     run:
-        shell("vg autoindex --workflow giraffe --target-mem 25 --threads {threads} --prefix ../results/graph/index/chr19_index --gfa {input.gfa} > {log}  2>&1")
+        shell("vg autoindex --workflow giraffe --target-mem 100 --threads {threads} --prefix ../results/graph/index/{wildcards.file} --gfa {input.gfa} > {log}  2>&1")
