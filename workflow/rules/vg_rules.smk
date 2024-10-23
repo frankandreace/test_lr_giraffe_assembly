@@ -4,18 +4,18 @@ rule vg_giraffe_lr_gaf:
     output:
         gaf="../results/alignment/{reads_file}.gaf"
     input:
-        graph_gbz=
-        distance_index=
-        minimizer_index=
+        # graph_gbz=
+        # distance_index=
+        # minimizer_index=
         hifi_sequence="{reads_file}.fastq"
     # params:
     #     url=lambda wildcards: next(entry['url'] for entry in config['urls'] if entry['output'] == wildcards.output)
     benchmark:
         # Directly use the {output} wildcard as part of the formatted string
-        "results/benchmarks/vg_giraffe_lr_{sequence}.benchmark.txt"
+        "..S/benchmarks/vg_giraffe_lr_{reads_file}.benchmark.txt"
     log:
         # Also use {output} for logging file
-        "results/logs/vg_giraffe_lr_{sequence}.log"
+        "../logs/vg_giraffe_lr_{reads_file}.log"
     threads: workflow.cores
     shell:
         """
@@ -31,7 +31,7 @@ rule vg_autoindex:
     input:
         gfa="../results/graph/gfa/{file}.gfa"
     log:
-        "../logs/vg/build_distance_index/{file}.log"
+        "../logs/vg/autoindex/{file}.log"
     threads: workflow.cores
     run:
-        shell("vg autoindex --workflow giraffe --threads {threads} --prefix ../results/graph/index/ --gfa {input.gfa}")
+        shell("vg autoindex --workflow giraffe --threads {threads} --prefix ../results/graph/index/ --gfa {input.gfa} > {log}  2>&1")
