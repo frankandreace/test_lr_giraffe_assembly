@@ -19,7 +19,7 @@ rule vg_giraffe_lr_gaf:
     threads: workflow.cores
     shell:
         """
-        vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf --named-coordinates > {output.gaf}
+        vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf --named-coordinates > {output.gaf} 2> {log}
         """
 
 
