@@ -1,0 +1,27 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 8
+Rules claiming more threads will be scaled down.
+Job stats:
+job                  count    min threads    max threads
+-----------------  -------  -------------  -------------
+all                      1              1              1
+vg_autoindex             1              8              8
+vg_extract_region        1              8              8
+vg_giraffe_lr_gaf        1              8              8
+vg_to_gfa                1              8              8
+total                    5              1              8
+
+Select jobs to execute...
+
+[Mon Nov  4 12:45:36 2024]
+rule vg_extract_region:
+    input: ../resources/graph/chr20.d9.vg
+    output: ../results/graph/chr20.100K.vg
+    log: ../logs/odgi_to_gfa/chr20-100K.log
+    jobid: 4
+    reason: Missing output files: ../results/graph/chr20.100K.vg
+    wildcards: file=chr20
+    threads: 8
+    resources: tmpdir=/tmp
+

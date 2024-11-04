@@ -3,13 +3,13 @@ configfile:"../config/config.yaml"
 
 #INCLUDING RULE FILES
 include: "rules/download_files.smk"
-include: "rules/help_tasks.smk"
+#include: "rules/help_tasks.smk"
 include: "rules/vg_rules.smk"
 
 #REQUIRED OUTPUT
 #downloaded_files = ["",""]
 #dist_idx = ["../results/graph/index/hprc-v1.1-mc-chm13-chr20.dist"]
-alignment = ["../results/alignment/m64012-190920-173625-Q20_chr20.100K.gaf"]
+alignment = ["../results/alignment/m64012-190920-173625-Q20_chr20.full.100k.gaf"]
 
 # EXECUTION
 
