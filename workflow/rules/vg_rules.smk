@@ -31,7 +31,7 @@ rule vg_autoindex:
         minimizer_index="../results/graph/index_giraffe/{file}.min",
         graph_gbz="../results/graph/index_giraffe/{file}.giraffe.gbz"
     input:
-        gfa="../resources/graph/gfa/{file}.gfa"
+        gfa="../results/graph/gfa/{file}.gfa"
     log:
         "../logs/vg/autoindex/{file}.log"
     threads: workflow.cores
@@ -40,25 +40,3 @@ rule vg_autoindex:
 
 
 ### SNARL FILES GENERATION ### 
-
-rule vg_convert_gfa_to_vg:
-    output:
-        graph="../results/graph/index/{file}.vg",
-    input:
-        gfa="../resources/graph/gfa/{file}.gfa"
-    log:
-        "../logs/vg/convert_gfa_to_vg/{file}.log"
-    threads: workflow.cores
-    run:
-        shell("vg convert --threads {threads} --gfa-in {input.gfa} --packed-out > {output.graph} 2> {log}")
-
-rule vg_distance_index:
-    output:
-        index="../results/graph/index/{file}.dist",
-    input:
-        graph="../results/graph/index/{file}.vg"
-    log:
-        "../logs/vg/distance_index/{file}.log"
-    threads: workflow.cores
-    run:
-        shell("vg index {input.graph} --threads {threads} --dist-name {output.index} 2> {log}")
