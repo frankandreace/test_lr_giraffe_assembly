@@ -25,6 +25,23 @@ extension:
 
 test_chromosome: "chr20"
 
+FILES:
+  - chr20.full
+
+SAMPLE_IDS:
+  - m6401
+  
+SEQUENCES:
+  - m64012-190920-173625.Q20
+  - m64012-190921-234837.Q20
+  - m64015-190920-185703.Q20
+  - m64015-190922-010918.Q20
+
+regions:
+  "1045":
+    chromosome: "chr20"
+    start: 10450000
+    end: 10550000
 
 
 # urls:

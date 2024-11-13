@@ -2,24 +2,22 @@
 
 rule vg_giraffe_lr_gaf:
     output:
-        gaf="../results/alignment/{reads_file}_{file}.gaf"
+        alignment="../results/alignment/{file}-{region_id}/{sample_id}/{reads_file}.gaf.zst"
     input:
-        graph_gbz="../results/graph/index_giraffe/{file}.giraffe.gbz",
-        distance_index="../results/graph/index_giraffe/{file}.dist",
-        minimizer_index="../results/graph/index_giraffe/{file}.min",
-        hifi_sequence="../resources/sequences/{reads_file}.fastq"
-    # params:
-    #     url=lambda wildcards: next(entry['url'] for entry in config['urls'] if entry['output'] == wildcards.output)
+        graph_gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz",
+        distance_index="../results/graph/index_giraffe/{file}-{region_id}.dist",
+        minimizer_index="../results/graph/index_giraffe/{file}-{region_id}.min",
+        hifi_sequence="../resources/sequences/{sample_id}/{reads_file}.fastq"
     benchmark:
         # Directly use the {output} wildcard as part of the formatted string
-        "../benchmarks/vg_giraffe_lr_{reads_file}_{file}.benchmark.txt"
+        "../benchmarks/vg_giraffe_lr/{file}-{region_id}/{sample_id}/{reads_file}.benchmark.txt"
     log:
         # Also use {output} for logging file
-        "../logs/vg_giraffe_lr_{reads_file}_{file}.log"
+        "../logs/vg/giraffe_lr/{file}-{region_id}/{sample_id}/{reads_file}.log"
     threads: workflow.cores
     shell:
         """
-        vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf --named-coordinates > {output.gaf} 2> {log}
+        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf --named-coordinates 2> {log})| scripts/process_out.awk | zstd > {output.alignment}
         """
 
 
@@ -27,16 +25,15 @@ rule vg_giraffe_lr_gaf:
 
 rule vg_autoindex:
     output:
-        index="../results/graph/index_giraffe/{file}.dist",
-        minimizer_index="../results/graph/index_giraffe/{file}.min",
-        graph_gbz="../results/graph/index_giraffe/{file}.giraffe.gbz"
+        index="../results/graph/index_giraffe/{file}-{region_id}.dist",
+        minimizer_index="../results/graph/index_giraffe/{file}-{region_id}.min",
+        graph_gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz"
     input:
-        gfa="../results/graph/gfa/{file}.gfa"
+        gfa="../results/graph/gfa/{file}-{region_id}.gfa"
     log:
-        "../logs/vg/autoindex/{file}.log"
+        "../logs/vg/autoindex/{file}-{region_id}.log"
     threads: workflow.cores
     run:
-        shell("vg autoindex --workflow giraffe --target-mem 100 --threads {threads} --prefix ../results/graph/index_giraffe/{wildcards.file} --gfa {input.gfa} 2> {log}  2>&1")
-
+        shell("vg autoindex --workflow giraffe --target-mem 100 --threads {threads} --prefix ../results/graph/index_giraffe/{wildcards.file}-{wildcards.region_id} --gfa {input.gfa} 2> {log}  2>&1")
 
 ### SNARL FILES GENERATION ### 
