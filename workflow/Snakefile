@@ -7,29 +7,62 @@ include: "rules/anchors_rules.smk"
 include: "rules/vg_rules.smk"
 include: "rules/help_tasks.smk"
 
-file = config["FILES"][0]
-sample_id = config["SAMPLE_IDS"][0]
-SEQUENCES = config["SEQUENCES"]
-region_id = config['regions']
+#file = config["FILES"][0]
+#sample_id = config["SAMPLE_IDS"][0]
+#SEQUENCES = config["SEQUENCES"]
+#region_id = config['regions']
 
 alignment_revio = ["../results/alignment/m84039-230418-213342-s3_chr20.full.100k.gaf","../results/alignment/m84011-220902-175841-s1_chr20.full.100k.gaf","../results/alignment/m84005-220827-014912-s1_chr20.full.100k.gaf"]
 
 #"../results/alignment/m64012-190920-173625.Q20_chr20.full.100k.gaf"
 
-onso_samples = ["m64012-190921-234837","m64015-190920-185703","m64015-190922-010918"]
-alignment_onso = [f"../results/alignment/{sample}.Q20_chr20.full.100k.gaf.zst" for sample in onso_samples]
+# onso_samples = ["m64012-190921-234837","m64015-190920-185703","m64015-190922-010918"]
+# alignment_onso = [f"../results/alignment/{sample}.Q20_chr20.full.100k.gaf.zst" for sample in onso_samples]
 
-achors_onso = [f"../results/anchors/chr20-full-100k/{sample}.Q20_chr20.full.100k.anchors.json" for sample in onso_samples]
+# achors_onso = [f"../results/anchors/chr20-full-100k/{sample}.Q20_chr20.full.100k.anchors.json" for sample in onso_samples]
 
-anchors_m6401 = f"../results/anchors/{file}/{sample_id}.anchors.json"
-combined = f"../results/alignment/{file}/{sample_id}/alignments-combined.processed.gaf"
+# anchors_m6401 = f"../results/anchors/{file}/{sample_id}.anchors.json"
+# combined = f"../results/alignment/{file}/{sample_id}/alignments-combined.processed.gaf"
 
-correctness_anchors_onso = [f"../results/anchor_correctness/chr20-full-100k/{sample}.Q20_chr20.full.100k_{sample}.Q20.txt" for sample in onso_samples ]
+# correctness_anchors_onso = [f"../results/anchor_correctness/chr20-full-100k/{sample}.Q20_chr20.full.100k_{sample}.Q20.txt" for sample in onso_samples ]
 # EXECUTION
 
+def generate_alignment_files():
+    result = []
+    for file in config["FILES"]:
+        for region_id in config['regions'].keys():
+            for sample_id in config["SAMPLE_IDS"]:
+                if sample_id == "m840":
+                    for reads_file in config["SEQUENCES"][sample_id]:
+                        result.append(f"../results/alignment/{file}-{region_id}/{sample_id}/{reads_file}.gaf.zst")
+    return result
+
+def generate_anchors():
+    result = []
+    for file in config["FILES"]:
+        for region_id in config['regions'].keys():
+            if region_id == "1045":
+                for sample_id in config["SAMPLE_IDS"]:
+                #if sample_id == "m6401":
+                    result.append(f"../results/anchors/{file}-{region_id}/{sample_id}.anchors.json")
+    return result
+
+def generate_verifications():
+    result = []
+    for file in config["FILES"]:
+        for region_id in config['regions'].keys():
+            if region_id == "1045":
+                for sample_id in config["SAMPLE_IDS"]:
+                #if sample_id == "m6401":
+                    result.append(f"../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt")
+    return result
+
+def align_full_chromosomes()
+    "../resources/graph/{graph_name}.og"
 
 rule all:
     input:
-        expand("../results/alignment/{file}-{region_id}/{sample_id}/{reads_file}.gaf.zst", 
-                region_id=config['regions'].keys(), reads_file=config["SEQUENCES"], file = config["FILES"][0], sample_id = config["SAMPLE_IDS"][0]),
-        expand("../results/graph/index/{file}-{region_id}.dist",region_id=config['regions'].keys(), file = config["FILES"][0],)
+        generate_anchors()
+        #generate_verifications()
+        #generate_alignment_files()
+        #expand("../results/graph/index/{file}-{region_id}.dist",region_id=config['regions'].keys(), file = config["FILES"][0],)

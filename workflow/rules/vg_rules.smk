@@ -7,7 +7,7 @@ rule vg_giraffe_lr_gaf:
         graph_gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz",
         distance_index="../results/graph/index_giraffe/{file}-{region_id}.dist",
         minimizer_index="../results/graph/index_giraffe/{file}-{region_id}.min",
-        hifi_sequence="../resources/sequences/{sample_id}/{reads_file}.fastq"
+        hifi_sequence="../resources/sequences/{sample_id}/{reads_file}.fastq.gz"
     benchmark:
         # Directly use the {output} wildcard as part of the formatted string
         "../benchmarks/vg_giraffe_lr/{file}-{region_id}/{sample_id}/{reads_file}.benchmark.txt"

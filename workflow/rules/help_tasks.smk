@@ -1,4 +1,8 @@
 ### PARAMETERS ### 
+
+wildcard_constraints:
+    full_file="[^-]+",  # Matches any string not containing '/'
+
 def get_region(wildcards):
     region_id = wildcards.region_id
     region = config['regions'][region_id]
@@ -11,6 +15,19 @@ rule odgi_view:
         file="../results/graph/index/{file}-{region_id}.og"
     log:
         "../logs/odgi_to_gfa/{file}-{region_id}.log"
+    threads: workflow.cores
+    shell:
+        """
+        odgi view -i {input.file} -g > {output.file}
+        """
+
+rule odgi_view_entire:
+    output:
+        file="../results/graph/gfa/{full_file}.gfa"
+    input:
+        file="../results/graph/index/{full_file}.og"
+    log:
+        "../logs/odgi_to_gfa/entire/{full_file}.log"
     threads: workflow.cores
     shell:
         """

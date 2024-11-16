@@ -1,28 +1,5 @@
 # URLS TO DATA
 
-urls:
-  # - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.gbz"
-  #   output: "hprc-v1.1-mc-chm13"
-  #   file_type: "gbz_graph"
-  - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC_PLUS/HG002/raw_data/PacBio_HiFi/15kb/m64012_190920_173625.Q20.fastq"
-    output: "m64012_190920_173625.Q20"
-    file_type: "reads_hifi_fq"
-  - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.chroms/chr20.d9.vg"
-    output: "hprc-v1.1-mc-chm13-chr20"
-    file_type: "vg_graph"
-
-outputs:
-  gbz_graph: ".graph"
-  odgi_graph: "graph"
-  vg_graph: "graph"
-  reads_hifi_fq: "sequences"
-
-extension:
-  gbz_graph: "gbz"
-  vg_graph: "vg"
-  odgi_graph: "og"
-  reads_hifi_fq: "fastq"
-
 test_chromosome: "chr20"
 
 FILES:
@@ -30,18 +7,29 @@ FILES:
 
 SAMPLE_IDS:
   - m6401
+  - m840
   
 SEQUENCES:
+  m6401:
   - m64012-190920-173625.Q20
   - m64012-190921-234837.Q20
   - m64015-190920-185703.Q20
   - m64015-190922-010918.Q20
+  m840:
+  - m84005-220827-014912-s1
+  - m84011-220902-175841-s1
+  - m84039-230418-213342-s3
+
 
 regions:
   "1045":
     chromosome: "chr20"
     start: 10450000
     end: 10550000
+  "1500":
+    chromosome: "chr20"
+    start: 15000000
+    end: 16000000
 
 
 # urls:
