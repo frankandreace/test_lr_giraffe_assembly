@@ -30,12 +30,7 @@ regions:
     chromosome: "chr20"
     start: 15000000
     end: 16000000
-
-
-# urls:
-#   - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.gbz"
-#     output: "../resources/graph/hprc-v1.1-mc-chm13.gbz"
-#   - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.chroms/chr20.vg"
-#     output: "../resources/graph/hprc-v1.1-mc-chm13-chr20.vg"
-#   - url: "https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC_PLUS/HG002/raw_data/PacBio_HiFi/15kb/m64012_190920_173625.Q20.fastq"
-#     output: "../resources/sequences/m64012_190920_173625.Q20.fastq"
+  "4000":
+    chromosome: ""
+    start: 40000000
+    end: 50000000

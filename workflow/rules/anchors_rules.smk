@@ -27,13 +27,16 @@ rule parse_gaf:
 
 rule verify_anchors_correctness:
     output:
-        file="../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt"  
+        file="../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt",
+        out_fastq="../resources/sequences/{sample_id}/{file}-{region_id}.selected.fastq"  
     input:
         anchors="../results/anchors/{file}-{region_id}/{sample_id}.anchors.json",
         hifi_sequences=get_all_sequences
+    log:
+        "../logs/achor_correctnesss/{file}-{region_id}/{sample_id}.log"
     shell:
         """
-        vg_anchor verify-output --anchors {input.anchors} {input.hifi_sequences} 2> {output.file}
+        vg_anchor verify-output --anchors {input.anchors} {input.hifi_sequences} > {output.file} 2> {log}
         """
 
 rule generate_anchors_dictionary:

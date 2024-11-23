@@ -2,16 +2,16 @@
 
 rule download_graph:
     output:
-        file="../resources/graph/{graph_name}.og"  # Static construction
+        file="../resources/full_graph/{graph_name}.full.og"  # Static construction
     params:
-        url="s3://human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.chroms/{graph_name}.og"
-        foder="../resources/graph/"
+        url="s3://human-pangenomics/pangenomes/freeze/freeze1/minigraph-cactus/hprc-v1.1-mc-chm13/hprc-v1.1-mc-chm13.chroms/{graph_name}.full.og",
+        #foder="../resources/graph/"
     log:
         "../logs/download/{graph_name}.log"
     threads: 1
     shell:
         """
-        aws s3 cp {params.url} {params.foder} 2> {log}
+        aws s3 cp --no-sign-request {params.url} {output.file} 2> {log}
         """
 
 

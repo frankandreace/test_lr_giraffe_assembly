@@ -1,0 +1,88 @@
+Building DAG of jobs...
+Job stats:
+job                            count
+---------------------------  -------
+all                                1
+generate_anchors_dictionary        1
+get_anchors_from_gaf               2
+verify_anchors_correctness         2
+total                              6
+
+
+[Fri Nov 15 17:56:10 2024]
+rule generate_anchors_dictionary:
+    input: ../results/graph/index/chr20.full-1045.dist, ../results/graph/index/chr20.full-1045.vg
+    output: ../results/anchor_dictionary/chr20.full-1045.pkl
+    log: ../logs/generate_anchors/chr20.full-1045.log
+    jobid: 3
+    reason: Missing output files: ../results/anchor_dictionary/chr20.full-1045.pkl
+    wildcards: file=chr20.full, region_id=1045
+    resources: tmpdir=/data/tmp
+
+
+[Fri Nov 15 17:56:10 2024]
+rule get_anchors_from_gaf:
+    input: ../results/anchor_dictionary/chr20.full-1045.pkl, ../results/alignment/chr20.full-1045/m840/alignments-combined.processed.gaf, ../results/graph/index/chr20.full-1045.vg
+    output: ../results/anchors/chr20.full-1045/m840.anchors.json
+    log: ../logs/gaf_parsing/chr20.full-1045/m840.log
+    jobid: 20
+    reason: Missing output files: ../results/anchors/chr20.full-1045/m840.anchors.json; Input files updated by another job: ../results/anchor_dictionary/chr20.full-1045.pkl
+    wildcards: file=chr20.full, region_id=1045, sample_id=m840
+    resources: tmpdir=/data/tmp
+
+
+[Fri Nov 15 17:56:10 2024]
+rule get_anchors_from_gaf:
+    input: ../results/anchor_dictionary/chr20.full-1045.pkl, ../results/alignment/chr20.full-1045/m6401/alignments-combined.processed.gaf, ../results/graph/index/chr20.full-1045.vg
+    output: ../results/anchors/chr20.full-1045/m6401.anchors.json
+    log: ../logs/gaf_parsing/chr20.full-1045/m6401.log
+    jobid: 2
+    reason: Missing output files: ../results/anchors/chr20.full-1045/m6401.anchors.json; Input files updated by another job: ../results/anchor_dictionary/chr20.full-1045.pkl
+    wildcards: file=chr20.full, region_id=1045, sample_id=m6401
+    resources: tmpdir=/data/tmp
+
+
+[Fri Nov 15 17:56:10 2024]
+rule verify_anchors_correctness:
+    input: ../results/anchors/chr20.full-1045/m840.anchors.json, ../resources/sequences/m840/m84005-220827-014912-s1.fastq.gz, ../resources/sequences/m840/m84011-220902-175841-s1.fastq.gz, ../resources/sequences/m840/m84039-230418-213342-s3.fastq.gz
+    output: ../results/anchor_correctness/chr20.full-1045/m840.txt
+    jobid: 19
+    reason: Missing output files: ../results/anchor_correctness/chr20.full-1045/m840.txt; Input files updated by another job: ../results/anchors/chr20.full-1045/m840.anchors.json
+    wildcards: file=chr20.full, region_id=1045, sample_id=m840
+    resources: tmpdir=/data/tmp
+
+
+[Fri Nov 15 17:56:10 2024]
+rule verify_anchors_correctness:
+    input: ../results/anchors/chr20.full-1045/m6401.anchors.json, ../resources/sequences/m6401/m64012-190920-173625.Q20.fastq.gz, ../resources/sequences/m6401/m64012-190921-234837.Q20.fastq.gz, ../resources/sequences/m6401/m64015-190920-185703.Q20.fastq.gz, ../resources/sequences/m6401/m64015-190922-010918.Q20.fastq.gz
+    output: ../results/anchor_correctness/chr20.full-1045/m6401.txt
+    jobid: 1
+    reason: Missing output files: ../results/anchor_correctness/chr20.full-1045/m6401.txt; Input files updated by another job: ../results/anchors/chr20.full-1045/m6401.anchors.json
+    wildcards: file=chr20.full, region_id=1045, sample_id=m6401
+    resources: tmpdir=/data/tmp
+
+
+[Fri Nov 15 17:56:10 2024]
+localrule all:
+    input: ../results/anchor_correctness/chr20.full-1045/m6401.txt, ../results/anchor_correctness/chr20.full-1045/m840.txt
+    jobid: 0
+    reason: Input files updated by another job: ../results/anchor_correctness/chr20.full-1045/m6401.txt, ../results/anchor_correctness/chr20.full-1045/m840.txt
+    resources: tmpdir=/data/tmp
+
+Job stats:
+job                            count
+---------------------------  -------
+all                                1
+generate_anchors_dictionary        1
+get_anchors_from_gaf               2
+verify_anchors_correctness         2
+total                              6
+
+Reasons:
+    (check individual jobs above for details)
+    input files updated by another job:
+        all, get_anchors_from_gaf, verify_anchors_correctness
+    missing output files:
+        generate_anchors_dictionary, get_anchors_from_gaf, verify_anchors_correctness
+
+This was a dry-run (flag -n). The order of jobs does not reflect the order of execution.

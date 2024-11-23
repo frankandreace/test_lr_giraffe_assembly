@@ -51,18 +51,35 @@ def generate_verifications():
     result = []
     for file in config["FILES"]:
         for region_id in config['regions'].keys():
-            if region_id == "1045":
-                for sample_id in config["SAMPLE_IDS"]:
+            #if region_id == "1045":
+            for sample_id in config["SAMPLE_IDS"]:
                 #if sample_id == "m6401":
-                    result.append(f"../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt")
+                #result.append(f"../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt")
+                result.append(f"../resources/sequences/{sample_id}/{file}-{region_id}.selected.fastq")
     return result
 
-def align_full_chromosomes()
-    "../resources/graph/{graph_name}.og"
+
+def download_files():
+    result = []
+    files = [f'chr{chr}.d9' for chr in list(range(1, 23)) + ['X', 'Y']]
+    for file in files:
+        result.append(f"../resources/full_graph/{file}.vg")
+    return result
+
+def align_full_chromosomes():
+    result = []
+    files = [f'chr{chr}' for chr in [20]]#1,6, #list(range(1, 23)) + ['X', 'Y']] #chr10.d9.vg
+    for file in files:
+        for sample_id in config["SAMPLE_IDS"]:
+            if sample_id == "m840":
+                for reads_file in config["SEQUENCES"][sample_id]:
+                    result.append(f"../results/alignment/full/{file}/{sample_id}/{reads_file}.gaf.zst")
+    return result
 
 rule all:
     input:
-        generate_anchors()
+        #generate_verifications(),
+        align_full_chromosomes()
+        #generate_anchors()
         #generate_verifications()
-        #generate_alignment_files()
-        #expand("../results/graph/index/{file}-{region_id}.dist",region_id=config['regions'].keys(), file = config["FILES"][0],)
+        #download_files()
