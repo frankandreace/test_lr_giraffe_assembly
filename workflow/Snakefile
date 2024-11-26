@@ -51,11 +51,11 @@ def generate_verifications():
     result = []
     for file in config["FILES"]:
         for region_id in config['regions'].keys():
-            #if region_id == "1045":
-            for sample_id in config["SAMPLE_IDS"]:
-                #if sample_id == "m6401":
-                #result.append(f"../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt")
-                result.append(f"../resources/sequences/{sample_id}/{file}-{region_id}.selected.fastq")
+            if region_id == "4000":
+                for sample_id in config["SAMPLE_IDS"]:
+                    if sample_id in ["ont_LC2024","m840"] :
+                    #result.append(f"../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt")
+                        result.append(f"../resources/sequences/{sample_id}/{file}-{region_id}.selected.fastq")
     return result
 
 
@@ -78,8 +78,8 @@ def align_full_chromosomes():
 
 rule all:
     input:
-        #generate_verifications(),
-        align_full_chromosomes()
+        generate_verifications(),
+        #align_full_chromosomes()
         #generate_anchors()
         #generate_verifications()
         #download_files()

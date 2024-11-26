@@ -8,6 +8,7 @@ FILES:
 SAMPLE_IDS:
   - m6401
   - m840
+  - ont_LC2024
   
 SEQUENCES:
   m6401:
@@ -19,6 +20,8 @@ SEQUENCES:
   - m84005-220827-014912-s1
   - m84011-220902-175841-s1
   - m84039-230418-213342-s3
+  ont_LC2024:
+  - PAW42
 
 
 regions:
@@ -31,6 +34,6 @@ regions:
     start: 15000000
     end: 16000000
   "4000":
-    chromosome: ""
+    chromosome: "chr20"
     start: 40000000
     end: 50000000

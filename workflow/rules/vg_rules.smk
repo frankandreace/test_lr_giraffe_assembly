@@ -1,25 +1,48 @@
 ### HIFI READS ALINGMENT ### 
+wildcard_constraints:
+    ont_sample_id="[^m-]+",  # Matches any string not containing m
+    hifi_sample_id="[^ont-]+"
 
-rule vg_giraffe_lr_gaf:
+rule vg_giraffe_r10_gaf:
     output:
-        alignment="../results/alignment/{file}-{region_id}/{sample_id}/{reads_file}.gaf.zst"
+        alignment="../results/alignment/{file}-{region_id}/{ont_sample_id}/{reads_file}.gaf.zst"
     input:
         graph_gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz",
         distance_index="../results/graph/index_giraffe/{file}-{region_id}.dist",
         minimizer_index="../results/graph/index_giraffe/{file}-{region_id}.min",
-        hifi_sequence="../resources/sequences/{sample_id}/{reads_file}.fastq.gz"
+        hifi_sequence="../resources/sequences/{ont_sample_id}/{reads_file}.fastq.gz"
     benchmark:
         # Directly use the {output} wildcard as part of the formatted string
-        "../benchmarks/vg_giraffe_lr/{file}-{region_id}/{sample_id}/{reads_file}.benchmark.txt"
+        "../benchmarks/vg_giraffe_lr/{file}-{region_id}/{ont_sample_id}/{reads_file}.benchmark.txt"
     log:
         # Also use {output} for logging file
-        "../logs/vg/giraffe_lr/{file}-{region_id}/{sample_id}/{reads_file}.log"
-    threads: workflow.cores
+        "../logs/vg/giraffe_lr/{file}-{region_id}/{ont_sample_id}/{reads_file}.log"
+    threads: 16
     shell:
         """
-        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf --named-coordinates 2> {log})| scripts/process_out.awk | zstd > {output.alignment}
+        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset r10 --fastq-in {input.hifi_sequence} --output-format gaf 2> {log})| scripts/process_out.awk | zstd > {output.alignment}
         """
 
+rule vg_giraffe_lr_gaf:
+    output:
+        alignment="../results/alignment/{file}-{region_id}/{hifi_sample_id}/{reads_file}.gaf.zst"
+    input:
+        graph_gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz",
+        distance_index="../results/graph/index_giraffe/{file}-{region_id}.dist",
+        minimizer_index="../results/graph/index_giraffe/{file}-{region_id}.min",
+        hifi_sequence="../resources/sequences/{hifi_sample_id}/{reads_file}.fastq.gz"
+    benchmark:
+        # Directly use the {output} wildcard as part of the formatted string
+        "../benchmarks/vg_giraffe_lr/{file}-{region_id}/{hifi_sample_id}/{reads_file}.benchmark.txt"
+    log:
+        # Also use {output} for logging file
+        "../logs/vg/giraffe_lr/{file}-{region_id}/{hifi_sample_id}/{reads_file}.log"
+    threads: 16
+    shell:
+        """
+        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf 2> {log})| scripts/process_out.awk | zstd > {output.alignment}
+        """
+#--named-coordinates
 rule vg_giraffe_lr_gaf_full_chr:
     output:
         alignment="../results/alignment/full/{file}/{sample_id}/{reads_file}.gaf.zst"

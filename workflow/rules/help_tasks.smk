@@ -50,16 +50,16 @@ rule odgi_extract_region:
         odgi extract -i {input.file} -o {output.file} -r CHM13#{params.region} -O -t16 -P -c100
         """
 #../scripts/extract_region {input.file} {output.file} {params.region}
-rule vg_gfa_to_vg:
+rule vg_gbz_to_vg:
     output:
         graph="../results/graph/index/{file}-{region_id}.vg",
     input:
-        gfa="../results/graph/gfa/{file}-{region_id}.gfa"
+        gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz"
     log:
-        "../logs/vg/convert_gfa_to_vg/{file}-{region_id}.log"
+        "../logs/vg/convert_gbz_to_vg/{file}-{region_id}.log"
     threads: workflow.cores
     run:
-        shell("vg convert --threads {threads} --gfa-in {input.gfa} --packed-out > {output.graph} 2> {log}")
+        shell("vg convert --threads {threads} {input.gbz} --packed-out > {output.graph} 2> {log}")
 
 rule vg_to_gfa:
     input:
