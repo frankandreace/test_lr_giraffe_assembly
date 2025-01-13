@@ -20,7 +20,7 @@ rule vg_giraffe_r10_gaf:
     threads: 16
     shell:
         """
-        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset r10 --fastq-in {input.hifi_sequence} --output-format gaf 2> {log})| scripts/process_out.awk | zstd > {output.alignment}
+        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset r10 --fastq-in {input.hifi_sequence} --output-format gaf 2> {log}) | scripts/process_out.awk | zstd > {output.alignment}
         """
 
 rule vg_giraffe_lr_gaf:
@@ -63,6 +63,26 @@ rule vg_giraffe_lr_gaf_full_chr:
         (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset hifi --fastq-in {input.hifi_sequence} --output-format gaf --named-coordinates 2> {log})| scripts/process_out.awk | zstd > {output.alignment}
         """
 
+# ONT VG GIRAFFE LONG READS ALINGMENT 
+rule vg_giraffe_r10_gaf_full_chr:
+    output:
+        alignment="../results/alignment/full/{file}/{ont_sample_id}/{reads_file}.gaf.zst"
+    input:
+        graph_gbz="../results/graph/index_giraffe/full/{file}.giraffe.gbz",
+        distance_index="../results/graph/index_giraffe/full/{file}.dist",
+        minimizer_index="../results/graph/index_giraffe/full/{file}.min",
+        ont_sequence="../resources/sequences/{ont_sample_id}/{reads_file}.fastq.gz"
+    benchmark:
+        # Directly use the {output} wildcard as part of the formatted string
+        "../benchmarks/vg_giraffe_lr/{file}/{ont_sample_id}/{reads_file}.benchmark.txt"
+    log:
+        # Also use {output} for logging file
+        "../logs/vg/giraffe_lr/{file}/{ont_sample_id}/{reads_file}.log"
+    threads: workflow.cores
+    shell:
+        """
+        (vg giraffe --gbz-name {input.graph_gbz} --threads {threads} --dist-name {input.distance_index} --minimizer-name {input.minimizer_index} --parameter-preset r10 --fastq-in {input.ont_sequence} --output-format gaf 2> {log}) | zstd > {output.alignment}
+        """
 
 ### GIRAFFE WORKFLOW FILE GENERATION ### 
 
