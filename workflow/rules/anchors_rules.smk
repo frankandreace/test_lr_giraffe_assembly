@@ -41,11 +41,10 @@ rule verify_anchors_correctness:
 
 rule generate_anchors_dictionary:
     output:
-        anchors_dictionary="../results/anchor_dictionary/{file}-{region_id}.pkl"
+        anchors_dictionary="../results/anchor_dictionary/{file}/{region_id}/anchor_dictionary.pkl"
     input:
-        distance_index="../results/graph/index/{file}-{region_id}.dist",
-        packed_graph="../results/graph/index/{file}-{region_id}.vg"
-
+        distance_index="../results/graph/index/{file}/{region_id}.dist",
+        packed_graph="../results/graph/index/{file}/{region_id}.vg"
     log:
         "../logs/generate_anchors/{file}-{region_id}.log"
     shell:
@@ -66,18 +65,4 @@ rule get_anchors_from_gaf:
     shell:
         """
         vg_anchor get-anchors --dictionary {input.anchors_dictionary} --graph {input.packed_graph} --alignment {input.alignment} --output {output.anchors} 2> {log}
-        """
-
-rule concatenate_files:
-    input:
-        files = lambda wildcards: expand("../results/alignment/{file}-{region_id}/{sample_id}/{reads_file}.processed.gaf", 
-                                        file=wildcards.file,
-                                        region_id=wildcards.region_id,
-                                        sample_id=wildcards.sample_id,
-                                        reads_file=get_sequences(wildcards.sample_id))
-    output:
-        combined = "../results/alignment/{file}-{region_id}/{sample_id}/alignments-combined.processed.gaf"
-    shell:
-        """
-        cat {input.files} > {output.combined}
         """

@@ -7,6 +7,8 @@ include: "rules/anchors_rules.smk"
 include: "rules/vg_rules.smk"
 include: "rules/help_tasks.smk"
 
+alignment_revio = ["../results/alignment/m84039-230418-213342-s3_chr20.full.100k.gaf","../results/alignment/m84011-220902-175841-s1_chr20.full.100k.gaf","../results/alignment/m84005-220827-014912-s1_chr20.full.100k.gaf"]
+
 # EXECUTION
 
 def generate_alignment_files():
@@ -22,8 +24,8 @@ def generate_alignment_files():
 def generate_anchors():
     result = []
     for file in config["FILES"]:
-        for region_id in config['regions'].keys():
-            if region_id == "1045":
+        for region_id in config['REGIONS'].keys():
+            if region_id == "RCCX":
                 for sample_id in config["SAMPLE_IDS"]:
                 #if sample_id == "m6401":
                     result.append(f"../results/anchors/{file}-{region_id}/{sample_id}.anchors.json")
@@ -36,37 +38,28 @@ def generate_verifications():
             if region_id == "4000":
                 for sample_id in config["SAMPLE_IDS"]:
                     if sample_id in ["ont_LC2024","m840"] :
-                    #result.append(f"../results/anchor_correctness/{file}-{region_id}/{sample_id}.txt")
                         result.append(f"../resources/sequences/{sample_id}/{file}-{region_id}.selected.fastq")
-    return result
-
-
-def download_files():
-    result = []
-    files = [f'chr{chr}.d9' for chr in list(range(1, 23)) + ['X', 'Y']]
-    for file in files:
-        result.append(f"../resources/full_graph/{file}.vg")
     return result
 
 def align_full_chromosomes():
     result = []
-    files = [f'chr{chr}' for chr in [20]]#1,6, #list(range(1, 23)) + ['X', 'Y']] #chr10.d9.vg
-    for file in files:
+    for file in config["FILES"]:
         for sample_id in config["SAMPLE_IDS"]:
-            if sample_id == "m840":
-                for reads_file in config["SEQUENCES"][sample_id]:
-                    result.append(f"../results/alignment/full/{file}/{sample_id}/{reads_file}.gaf.zst")
+            if sample_id in ["m840", "ont_LC2024"]: #,"ont_LC2024"
+                for region_name in config["REGIONS"]:
+                    result.append(f"../results/alignment/full/{file}/{sample_id}/processed/{region_name}/concatenated_alignments.gaf.gz")
+                #result.append(f"../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.sorted.gaf.gz")
     return result
 
-def align_full_graph():
+def chunk_graph():
     result = []
-    for file in ["hprc-v1.0-mc-chm13-minaf.0.1"] :#hprc-v1.1-mc-chm13.d9
-        for sample_id in config["SAMPLE_IDS"]:
-            if sample_id in ["m840"]: #,"ont_LC2024"
-                for reads_file in config["SEQUENCES"][sample_id]:
-                    result.append(f"../results/alignment/full/{file}/{sample_id}/{reads_file}.gaf.zst")
+    for file in config["FILES"]:
+        for region_name in config["REGIONS"]:
+            result.append(f"../results/graph/index_giraffe/full/{file}/{region_name}.vg")
+
     return result
 
 rule all:
     input:
-        align_full_graph()
+        align_full_chromosomes(),
+        chunk_graph()

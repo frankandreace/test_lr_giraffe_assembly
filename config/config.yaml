@@ -3,10 +3,10 @@
 test_chromosome: "chr20"
 
 FILES:
-  - chr20.full
+  - hprc-v1.1-mc-chm13.d9
 
 SAMPLE_IDS:
-  - m6401
+  # - m6401
   - m840
   - ont_LC2024
   
@@ -23,17 +23,40 @@ SEQUENCES:
   ont_LC2024:
   - PAW42
 
+DOWNLOADS:
+  m840:
+    https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/scratch/HG002/sequencing/hifirevio/m84005_220827_014912_s1.hifi_reads.fastq.gz : ../resources/sequences/m840/m84005-220827-014912-s1.fastq.gz
+    https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/scratch/HG002/sequencing/hifirevio/m84011_220902_175841_s1.hifi_reads.fastq.gz: ../resources/sequences/m840/m84011-220902-175841-s1.fastq.gz
+    https://s3-us-west-2.amazonaws.com/human-pangenomics/T2T/scratch/HG002/sequencing/hifirevio/m84039_230418_213342_s3.hifi_reads.default.fastq.gz: ../resources/sequences/m840/m84039-230418-213342-s3.fastq.gz
 
-regions:
-  "1045":
-    chromosome: "chr20"
-    start: 10450000
-    end: 10550000
-  "1500":
-    chromosome: "chr20"
-    start: 15000000
-    end: 16000000
-  "4000":
-    chromosome: "chr20"
-    start: 40000000
-    end: 50000000
+
+REGIONS:
+  "RCCX":
+    chromosome: "chr6"
+    start: 31798842
+    end: 31960826
+  "CYP11":
+    chromosome: "chr8"
+    start: 144003994
+    end: 144069468
+  # "BRCA1":
+  #   chromosome: "chr17"
+  #   start: 43902857
+  #   end: 43983996
+  # "FULL_17":
+  #   chromosome: "chr17"
+  #   start: 0
+  #   end: 84276897
+
+  # "1045":
+  #   chromosome: "chr20"
+  #   start: 10450000
+  #   end: 10550000
+  # "1500":
+  #   chromosome: "chr20"
+  #   start: 15000000
+  #   end: 16000000
+  # "4000":
+  #   chromosome: "chr20"
+  #   start: 40000000
+  #   end: 50000000

@@ -4,81 +4,120 @@ wildcard_constraints:
     full_file="[^-]+",  # Matches any string not containing '/'
     odgi_file="[^d9-]+",  # Matches any string not containing '/'
 
-def get_region(wildcards):
-    region_id = wildcards.region_id
-    region = config['regions'][region_id]
-    return f"{region['chromosome']}:{region['start']}-{region['end']}"
 
-rule odgi_view:
-    output:
-        file="../results/graph/gfa/{file}-{region_id}.gfa"
-    input:
-        file="../results/graph/index/{file}-{region_id}.og"
-    log:
-        "../logs/odgi_to_gfa/{file}-{region_id}.log"
-    threads: workflow.cores
-    shell:
-        """
-        odgi view -i {input.file} -g > {output.file}
-        """
+def get_region_position(wildcard):
+    """
+    This function is used to generate the string to give in input to vg chunk to get required find the genomic position
+    """
+    region = config['REGIONS'][wildcard]
+    return f"CHM13#0#{region['chromosome']}:{region['start']}-{region['end']}"
 
-rule odgi_view_entire:
-    output:
-        file="../results/graph/full_gfa/{odgi_file}.full.gfa"
-    input:
-        file="../resources/full_graph/{odgi_file}.full.og"
-    log:
-        "../logs/odgi_to_gfa/entire/{odgi_file}.log"
-    threads: workflow.cores
-    shell:
-        """
-        odgi view -i {input.file} -g > {output.file}
-        """
+# def get_region_name(wildcards):
+#     """
+#     This function is used to generate the name of the output subgraph or parsed alignment using the region name.
+#     """
+#     return wildcards.region_id
 
-rule odgi_extract_region:
-    output:
-        file="../results/graph/index/{odgi_file}-{region_id}.og"
-    input:
-        file="../resources/graph/{odgi_file}.og"
-    log:
-        "../logs/odgi_to_gfa/{odgi_file}-{region_id}.log"
-    threads: workflow.cores
-    params:
-        region = get_region
-    shell:
-        """
-        odgi extract -i {input.file} -o {output.file} -r CHM13#{params.region} -O -t16 -P -c100
-        """
-#../scripts/extract_region {input.file} {output.file} {params.region}
+### RULES ###
+
+# convert gbz to vg (for Python APIs)
 rule vg_gbz_to_vg:
     output:
-        graph="../results/graph/index/{file}-{region_id}.vg",
+        graph="../results/graph/index_giraffe/full/{file}.vg",
     input:
-        gbz="../results/graph/index_giraffe/{file}-{region_id}.giraffe.gbz"
+        gbz="../results/graph/index_giraffe/full/{file}.gbz"
     log:
-        "../logs/vg/convert_gbz_to_vg/{file}-{region_id}.log"
+        "../logs/vg/convert_gbz_to_vg/{file}.log"
     threads: workflow.cores
     run:
         shell("vg convert --threads {threads} {input.gbz} --packed-out > {output.graph} 2> {log}")
 
+# convert vg to gfa (to visualize the region on Bandage)
 rule vg_to_gfa:
     input:
-        graph="../resources/full_graph/{file}.vg",
+        graph="../results/graph/index_giraffe/full/{file}.vg",
     output:
-        gfa="../results/graph/full_gfa/{file}.gfa"
+        gfa="../results/graph/gfa/{file}.gfa"
     log:
         "../logs/vg/convert_vg_to_gfa/{file}.log"
     threads: workflow.cores
     run:
         shell("vg convert --threads {threads} {input.graph} ---gfa-out > {output.gfa} 2> {log}")
 
+# generate the distance index from a packedgraph (.vg)
 rule vg_distance_index:
     output:
-        index="../results/graph/index/{file}-{region_id}.dist",
+        index = "../results/graph/index/{file}-{region_id}.dist"
     input:
-        graph="../results/graph/index/{file}-{region_id}.vg"
-    log:
-        "../logs/vg/distance_index/{file}-{region_id}.log"
+        graph = "../results/graph/index/{file}-{region_id}.vg"
+    log: "../logs/vg/distance_index/{file}_{region_id}.log"
     threads: workflow.cores
     run:
         shell("vg index {input.graph} --threads {threads} --dist-name {output.index} 2> {log}")
+
+# concatenate alignment files into 1 if required
+rule concatenate_alignments:
+    input:
+        files = lambda wildcards: expand("../results/alignment/full/{file}/{sample_id}/{reads_file}.gaf.gz", 
+        file=wildcards.file,
+        sample_id=wildcards.sample_id,
+        reads_file=get_sequences(wildcards.sample_id))
+    output:
+        combined = "../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.gaf.gz"
+    threads: 1
+    run:
+        shell("cat {input.files} > {output.combined}")
+
+rule vg_chunk_graph:
+    output:
+        subgraph="../results/graph/index_giraffe/full/{file}/{region_name}.vg",
+    input:
+        graph="../results/graph/index_giraffe/full/{file}.gbz",
+        snarl = "../results/graph/index_giraffe/full/{file}.snarls"
+    params:
+        region_id = lambda wildcards: get_region_position(wildcards.region_name)
+    log:
+        "../logs/vg/chink_graph/{file}_{region_name}.log"
+    threads: workflow.cores
+    run:
+        shell("vg chunk -g -x {input.graph} -p {params.region_id} -S {input.snarl} -O pg --threads {threads} -b {wildcards.region_name} > {output.subgraph} 2> {log}")
+
+rule vg_chunk_reads:
+    output:
+        chunked_gaf="../results/alignment/full/{file}/{sample_id}/processed/{region_name}/concatenated_alignments.gaf.gz"
+    input:
+        graph="../results/graph/index_giraffe/full/{file}.gbz",
+        sorted_gaf="../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.sorted.gaf.gz",
+        snarl = "../results/graph/index_giraffe/full/{file}.snarls",
+        tabix_file = "../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.sorted.gaf.gz.tbi"
+    params:
+        region_id = lambda wildcards: get_region_position(wildcards.region_name),
+    log:
+        "../logs/vg/chunk_reads/{file}_{sample_id}_{region_name}.log"
+    threads: workflow.cores
+    run:
+        shell("vg chunk -a {input.sorted_gaf} -F -x {input.graph} -p {params.region_id} -S {input.snarl} --threads {threads} -b {wildcards.region_name} > {output.chunked_gaf} 2> {log}")
+
+
+rule sort_gaf:
+    input:
+        gaf_combined = "../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.gaf.gz"
+    output:
+        gaf_sorted = "../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.sorted.gaf.gz"
+    log:
+        log = "../logs/sort_gaf/{file}_{sample_id}.log"
+    threads: workflow.cores
+    run:
+        shell("vg gamsort -t {threads} -p -G {input.gaf_combined} | bgzip -c > {output.gaf_sorted}")
+
+rule index_sorted_gaf:
+    input:
+        gaf_sorted = "../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.sorted.gaf.gz"
+    output:
+        tabix_file = "../results/alignment/full/{file}/{sample_id}/processed/{sample_id}.sorted.gaf.gz.tbi"
+    log: 
+        log = "../logs/index_gaf/{file}_{sample_id}.log"
+    threads: workflow.cores
+    run:
+        shell("tabix --threads {threads} -p gaf {input.gaf_sorted} 2> {log.log}")
+
